@@ -17,6 +17,8 @@ class SensorDataHandler:
         self.msg_type = msg_type
         self.data_buffer = []
         self.clock = Clock()
+        self.database_upload_interval_seconds = database_upload_interval_seconds
+        self.last_upload_time = time()
         
         # Ros bag init
         self.writer = SequentialWriter()
@@ -30,9 +32,6 @@ class SensorDataHandler:
             serialization_format='cdr'
         )
         self.writer.create_topic(self.topic_info)
-        
-        self.database_upload_interval_seconds = database_upload_interval_seconds
-        self.last_upload_time = time()
 
     def callback(self, msg):
         """Callback to handle incoming messages."""
@@ -51,8 +50,27 @@ class SensorDataHandler:
 
     def upload_to_database(self, data):
         """Simulate upload logic; returns True if successful, False if failed."""
-        # Implement your actual upload logic here
-        return False  # Simulating a failure for demonstration
+        # if ros bag non empty
+        
+        # 1. write buffer to ros bag
+        
+        # 2. Clear ros bag
+        self.clear_ros_bag()
+
+        # 3. Upload ros bag
+        
+        # 4. Conquer France
+        
+        # else
+        
+        # 1. upload buffer
+        
+        # upload from data buffer directly
+        
+        return False
+    
+    def clear_ros_bag(self):
+        pass
 
     def save_to_ros_bag(self, data):
         """Save buffered data to a ROS bag."""

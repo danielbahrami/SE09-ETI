@@ -5,8 +5,8 @@ https://github.com/relffok/mir_robot
 
 # Ros humble setup
 https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html
+sudo apt install ros-humble-rosbag2
 
-sudo apt install ros-humble-rosbag2 # not sure if necessary actually
 
 # This package setup
 cd ~/ros2_ws/
