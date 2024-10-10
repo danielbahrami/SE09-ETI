@@ -10,9 +10,9 @@ class SensorMonitor(Node):
         super().__init__('sensor_monitor')
         
         # Create instances of each data handler
-        self.joint_state_handler = sensor_data_handler.JointStateHandler(database_upload_interval_seconds=60)
-        self.odom_handler = sensor_data_handler.OdometryHandler(database_upload_interval_seconds=60)
-        self.laser_scan_handler = sensor_data_handler.LaserScanHandler(database_upload_interval_seconds=60)
+        self.joint_state_handler = sensor_data_handler.JointStateHandler(database_upload_interval_seconds=10, bag_file_split_duration=10)
+        self.odom_handler = sensor_data_handler.OdometryHandler(database_upload_interval_seconds=10, bag_file_split_duration=10)
+        self.laser_scan_handler = sensor_data_handler.LaserScanHandler(database_upload_interval_seconds=10, bag_file_split_duration=10)
 
         # Create subscriptions for each sensor topic
         self.create_subscription(sensor_data_handler.JointState, '/joint_states', self.joint_state_handler.callback, 10)
