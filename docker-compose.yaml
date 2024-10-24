@@ -17,12 +17,11 @@ services:
       - "9001:9001"
     networks:
       - eit
-  
+
   cloud:
     build: ./cloud
     networks:
       - eit
-
 
 networks:
   eit:
