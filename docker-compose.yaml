@@ -1,0 +1,29 @@
+versions: "3.8"
+
+services:
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+    networks:
+      - eit
+
+  mqtt_broker:
+    image: eclipse-mosquitto:1.6.12
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    networks:
+      - eit
+  
+  cloud:
+    build: ./cloud
+    networks:
+      - eit
+
+
+networks:
+  eit:
+    diver: bridge
