@@ -2,31 +2,37 @@ import re
 import os
 import random
 from rclpy.serialization import serialize_message, deserialize_message
-from rclpy.clock import Clock
 from rosbag2_py import SequentialWriter, StorageOptions, ConverterOptions, TopicMetadata
 from sensor_msgs.msg import JointState, LaserScan
 from nav_msgs.msg import Odometry
+from sensor_msgs.msg import Imu
 from time import time
 
 class SensorDataHandler:
     MSG_TYPE_MAP = {
         JointState: 'sensor_msgs/msg/JointState',
         Odometry: 'nav_msgs/msg/Odometry',
-        LaserScan: 'sensor_msgs/msg/LaserScan'
+        LaserScan: 'sensor_msgs/msg/LaserScan',
+        Imu: 'sensor_msgs/msg/Imu'
     }
     """Base class for handling sensor data."""
     def __init__(self, topic, msg_type, database_upload_interval_seconds, bag_file_split_duration):
         self.topic = topic
         self.msg_type = msg_type
-        self.clock = Clock()
         self.database_upload_interval_seconds = database_upload_interval_seconds
         self.last_upload_time = time()
         
         # Ros bag init
         self.writer = SequentialWriter()
-        self.bag_file_path = f"data/{self.topic.replace('/', '_')}"
-        self.storage_options = StorageOptions(uri=self.bag_file_path, storage_id='sqlite3', max_bagfile_duration=bag_file_split_duration)
-        self.bag_extension = ".db3"
+        self.bag_file_path = f"data/{self.topic.replace('/', '_')[1:]}"
+        
+        # switch between sql and mcap easily
+        storage_type_is_sql = False
+        
+        storage= 'sqlite3' if storage_type_is_sql else 'mcap'
+        self.bag_extension = ".db3" if storage_type_is_sql else  ".mcap"
+        self.storage_options = StorageOptions(uri=self.bag_file_path, storage_id=storage, max_bagfile_duration=bag_file_split_duration)
+        
         self.converter_options = ConverterOptions()
         self.writer.open(self.storage_options, self.converter_options)
         self.topic_info = TopicMetadata(
@@ -112,27 +118,3 @@ class SensorDataHandler:
             sorted_files_by_bag_index.pop()
         
         return sorted_files_by_bag_index
-
-class JointStateHandler(SensorDataHandler):
-    def __init__(self, database_upload_interval_seconds, bag_file_split_duration):
-        super().__init__('/joint_states', JointState, database_upload_interval_seconds, bag_file_split_duration)
-
-    def callback(self, msg):
-        super().callback(msg)
-        # print(f"Joint Positions: {msg.position}")
-
-class OdometryHandler(SensorDataHandler):
-    def __init__(self, database_upload_interval_seconds, bag_file_split_duration):
-        super().__init__('/odom', Odometry, database_upload_interval_seconds, bag_file_split_duration)
-
-    def callback(self, msg):
-        super().callback(msg)
-        # print(f"Odom Position: {msg.pose.pose.position}")
-
-class LaserScanHandler(SensorDataHandler):
-    def __init__(self, database_upload_interval_seconds, bag_file_split_duration):
-        super().__init__('/scan', LaserScan, database_upload_interval_seconds, bag_file_split_duration)
-
-    def callback(self, msg):
-        super().callback(msg)
-        # print(f"Laser Scan Ranges: {msg.ranges[:5]}")  # Print first 5 ranges
