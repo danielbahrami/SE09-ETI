@@ -1,9 +1,12 @@
-FROM osrf/ros:humble-desktop-full
+FROM ubuntu:22.04
+SHELL ["/bin/bash", "-c"]
+ARG DEBIAN_FRONTEND=noninteractive
 
 ARG USERNAME=Mir_robot
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
+#Create a User
 # Create the user
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
@@ -17,29 +20,55 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y python3-pip
 ENV SHELL /bin/bash
 
-#Anything else
-RUN sudo apt update -y
-RUN sudo apt upgrade -y
-RUN sudo apt install ros-dev-tools -y
+USER $USERNAME
+WORKDIR /home/$USERNAME
 
+#Set locale
+RUN locale  # check for UTF-8
+RUN sudo apt update && sudo apt install locales
+RUN sudo locale-gen en_US en_US.UTF-8
+RUN sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+RUN export LANG=en_US.UTF-8
+RUN locale  # verify settings
+#Setup Sources 
+RUN sudo apt install software-properties-common -y
+RUN sudo add-apt-repository universe
+#Add ROS 2 GPG key
+RUN sudo apt update && sudo apt install curl -y
+RUN sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+#Install ROS 2 packages
+RUN sudo apt update
+RUN sudo apt upgrade
+
+USER root
+RUN DEBIAN_FRONTEND=noninteractive apt install ros-humble-desktop -y
+USER $USERNAME
+
+RUN sudo apt install ros-dev-tools -y
 #Set up mir_robot package
 RUN mkdir -p ~/ros2_ws/src
 RUN cd ~/ros2_ws/
 RUN git clone -b humble-devel https://github.com/relffok/mir_robot src/mir_robot
 RUN vcs import < src/mir_robot/ros2.repos src --recursive
-
 RUN sudo apt update
+RUN sudo apt upgrade
 RUN sudo apt install -y python3-rosdep
+RUN sudo rosdep init
 RUN rosdep update
 RUN rosdep update --rosdistro=humble
 RUN rosdep install --from-paths src --ignore-src -r -y --rosdistro humble
-
 RUN source /opt/ros/humble/setup.bash
 RUN cd ~/ros2_ws
-RUN colcon build
+RUN source /opt/ros/humble/setup.bash && colcon build
+#RUN sudo echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
 
-RUN echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
+COPY . /home/$USERNAME/ros2_ws/src/
 
-RUN cd ~/ros2_ws/src/mir_data_collection/mir_data_collection
-RUN start_data_collection.s
+#ENTRYPOINT ["/bin/bash", "-c", "exec bash"]
 
+#RUN ~/ros2_ws/src/mir_data_collection/mir_data_collection/start_data_collection.sh
+
+RUN sudo chmod +x ~/ros2_ws/src/mir_data_collection/start_data_collection.sh
+
+CMD source /opt/ros/humble/setup.bash && ~/ros2_ws/src/mir_data_collection/start_data_collection.sh
