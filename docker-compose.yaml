@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  mir_robot:
+    build:
+      context: ./mir_data_collection
+      dockerfile: DockerFile 
+    volumes: 
+     - ./mir_data_collection:/ros2_ws/src
