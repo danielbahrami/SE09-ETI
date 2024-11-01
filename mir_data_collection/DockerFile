@@ -6,8 +6,7 @@ ARG USERNAME=Mir_robot
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-#Create a User
-# Create the user
+#Create the user
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
     #
@@ -47,28 +46,23 @@ USER $USERNAME
 
 RUN sudo apt install ros-dev-tools -y
 #Set up mir_robot package
-RUN mkdir -p ~/ros2_ws/src
-RUN cd ~/ros2_ws/
-RUN git clone -b humble-devel https://github.com/relffok/mir_robot src/mir_robot
-RUN vcs import < src/mir_robot/ros2.repos src --recursive
+RUN mkdir -p ~/ros2_ws/src/mir_data_collection
+RUN cd ~/ros2_ws/ && git clone -b humble-devel https://github.com/relffok/mir_robot src/mir_robot
+RUN cd ~/ros2_ws/ && vcs import < src/mir_robot/ros2.repos src --recursive
 RUN sudo apt update
 RUN sudo apt upgrade
 RUN sudo apt install -y python3-rosdep
 RUN sudo rosdep init
 RUN rosdep update
 RUN rosdep update --rosdistro=humble
-RUN rosdep install --from-paths src --ignore-src -r -y --rosdistro humble
-RUN source /opt/ros/humble/setup.bash
-RUN cd ~/ros2_ws
-RUN source /opt/ros/humble/setup.bash && colcon build
-#RUN sudo echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
+RUN cd ~/ros2_ws/ && rosdep install --from-paths src --ignore-src -r -y --rosdistro humble
 
-COPY . /home/$USERNAME/ros2_ws/src/
+RUN cd ~/ros2_ws/ && source /opt/ros/humble/setup.bash && colcon build
+RUN cd ~/ros2_ws/ && sudo echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
 
-#ENTRYPOINT ["/bin/bash", "-c", "exec bash"]
+COPY . /home/$USERNAME/ros2_ws/src/mir_data_collection
 
-#RUN ~/ros2_ws/src/mir_data_collection/mir_data_collection/start_data_collection.sh
+RUN sudo chmod +x ~/ros2_ws/src/mir_data_collection/mir_data_collection/start_data_collection.sh
 
-RUN sudo chmod +x ~/ros2_ws/src/mir_data_collection/start_data_collection.sh
-
-CMD source /opt/ros/humble/setup.bash && ~/ros2_ws/src/mir_data_collection/start_data_collection.sh
+USER $USERNAME
+CMD bash /home/${environment}/ros2_ws/src/mir_data_collection/mir_data_collection/start_data_collection.sh

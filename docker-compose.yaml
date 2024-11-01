@@ -3,8 +3,8 @@ services:
   ros_humble:
     #image: osrf/ros:humble-desktop-full   # Base ROS 2 Humble image
     container_name: ubuntu_ros_robot
-    #volumes:
-    #  - ./mir_data_collection:/home/ros2_ws/src  # Mount local workspace directory (optional)
+    environment:
+      - environment=Mir_robot
     build:
       context: ./mir_data_collection
       dockerfile: DockerFile
