@@ -89,7 +89,7 @@ class SensorDataHandler:
     
     def upload_file_to_database(self, file):
         """Upload a single file to database; returns True if successful, False if failed."""
-        return random.choice([True, False])
+        return True
 
     def save_buffer_to_ros_bag(self, data):
         for msg in data:

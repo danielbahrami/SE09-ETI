@@ -45,6 +45,8 @@ RUN DEBIAN_FRONTEND=noninteractive apt install ros-humble-desktop -y
 USER $USERNAME
 
 RUN sudo apt install ros-dev-tools -y
+RUN sudo apt install ros-humble-rosbag2 -y
+RUN sudo apt install ros-humble-rosbag2-storage-mcap -y
 #Set up mir_robot package
 RUN mkdir -p ~/ros2_ws/src/mir_data_collection
 RUN cd ~/ros2_ws/ && git clone -b humble-devel https://github.com/relffok/mir_robot src/mir_robot
