@@ -12,7 +12,7 @@ source ~/ros2_ws/install/setup.bash
 trap "kill $gazebo_pid $amcl_pid $navigation_pid $monitor_pid" EXIT INT
 
 # Start Gazebo simulation in the background
-ros2 launch mir_gazebo mir_gazebo_launch.py world:=maze rviz_config_file:=$(ros2 pkg prefix mir_navigation)/share/mir_navigation/rviz/mir_nav.rviz &
+ros2 launch mir_gazebo mir_gazebo_launch.py world:=maze rviz_config_file:=$(ros2 pkg prefix mir_navigation)/share/mir_navigation/rviz/mir_nav.rviz gui:=false teleop_enabled:=false &
 gazebo_pid=$!
 
 # Start Adaptive Monte Carlo localization
@@ -54,9 +54,3 @@ while true; do
   # Wait 10 seconds before sending another goal
   sleep 10
 done
-
-# Wait for all background processes to finish
-wait
-
-
-

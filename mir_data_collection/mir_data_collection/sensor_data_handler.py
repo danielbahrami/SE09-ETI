@@ -89,7 +89,7 @@ class SensorDataHandler:
     
     def upload_file_to_database(self, file):
         """Upload a single file to database; returns True if successful, False if failed."""
-        return True
+        return False
 
     def save_buffer_to_ros_bag(self, data):
         for msg in data:
@@ -97,7 +97,7 @@ class SensorDataHandler:
             
     def save_msg_to_ros_bag(self, msg):
         serialized_msg = serialize_message(msg)
-        timestamp = msg.header.stamp.sec * 1_000_000_000 + msg.header.stamp.nanosec
+        timestamp = int(time() * 1_000_000_000) + msg.header.stamp.nanosec
         self.writer.write(self.topic, serialized_msg, timestamp)
 
     def deserialize_msg(self, msg):
