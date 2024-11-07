@@ -6,6 +6,7 @@ from rosbag2_py import SequentialWriter, StorageOptions, ConverterOptions, Topic
 from sensor_msgs.msg import JointState, LaserScan
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu
+from . import post_request
 from time import time
 
 class SensorDataHandler:
@@ -89,7 +90,8 @@ class SensorDataHandler:
     
     def upload_file_to_database(self, file):
         """Upload a single file to database; returns True if successful, False if failed."""
-        return False
+        #post_request.upload_file_to_db(file)#
+        #return False
 
     def save_buffer_to_ros_bag(self, data):
         for msg in data:

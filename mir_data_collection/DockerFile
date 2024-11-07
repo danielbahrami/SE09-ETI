@@ -46,7 +46,7 @@ RUN cd ~/ros2_ws/ && sudo echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashr
 #Copy directory into container
 COPY . /home/$USERNAME/ros2_ws/src/mir_data_collection
 #ROS_py dependencies
-RUN sudo apt install ros-humble-rosbag2 -y && sudo apt install ros-humble-rosbag2-storage-mcap -y && sudo apt install ros-humble-rosbag2-py -y && sudo apt install ros-humble-rclpy -y
+RUN sudo apt install ros-humble-rosbag2 -y && sudo apt install ros-humble-rosbag2-storage-mcap -y && sudo apt install ros-humble-rosbag2-py -y && sudo apt install ros-humble-rclpy -y && sudo apt-get install python3-requests -y
 
 RUN sudo chmod 777 -R ~/ros2_ws/
 
