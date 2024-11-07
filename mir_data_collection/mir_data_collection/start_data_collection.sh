@@ -2,6 +2,8 @@
 
 cd ~/ros2_ws
 
+colcon build --packages-select mir_data_collection
+
 # Source
 source /opt/ros/humble/setup.bash
 source ~/ros2_ws/install/setup.bash

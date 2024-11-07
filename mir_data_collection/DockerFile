@@ -64,6 +64,7 @@ RUN cd ~/ros2_ws/ && sudo echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashr
 
 COPY . /home/$USERNAME/ros2_ws/src/mir_data_collection
 
+RUN sudo chmod 777 -R ~/ros2_ws/
 RUN sudo chmod +x ~/ros2_ws/src/mir_data_collection/mir_data_collection/start_data_collection.sh
 
 USER $USERNAME
