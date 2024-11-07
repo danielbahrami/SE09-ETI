@@ -1,10 +1,9 @@
 version: '3'
 services:
   ros_humble:
-    #image: osrf/ros:humble-desktop-full   # Base ROS 2 Humble image
     container_name: ubuntu_ros_robot
     environment:
-      - environment=Mir_robot
+      - username=Mir_robot
     build:
       context: ./mir_data_collection
       dockerfile: DockerFile
