@@ -91,7 +91,7 @@ class SensorDataHandler:
     def upload_file_to_database(self, file):
         """Upload a single file to database; returns True if successful, False if failed."""
         #post_request.upload_file_to_db(file)#
-        #return False
+        return False
 
     def save_buffer_to_ros_bag(self, data):
         for msg in data:
