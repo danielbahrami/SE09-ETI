@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 
+	"github.com/danielbahrami/se09-eti/cloud/api"
 	"github.com/danielbahrami/se09-eti/cloud/database"
 	"github.com/danielbahrami/se09-eti/cloud/env"
 )
@@ -11,9 +13,11 @@ import (
 func main() {
 	// Load environment variables
 	env.Load(".env")
+	fmt.Println(env.Get("MONGO_URI"))
 
 	// Connect to MongoDB
-	client, err := database.ConnectDB(env.Get("MONGO_URI"))
+	mongoUri := fmt.Sprintf("mongodb://%s:%s", env.Get("MONGO_HOST"), env.Get("MONGO_PORT"))
+	client, err := database.ConnectDB(mongoUri)
 	if err != nil {
 		log.Fatal("Error connecting to MongoDB:", err)
 	}
@@ -23,4 +27,6 @@ func main() {
 			log.Fatal("Error disconnecting from MongoDB:", err)
 		}
 	}()
+
+	api.RunAPI(client)
 }

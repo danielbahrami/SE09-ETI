@@ -15,7 +15,7 @@ func ConnectDB(uri string) (*mongo.Client, error) {
 	defer cancel()
 
 	// Connect to MongoDB
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
+	client, err := mongo.Connect(options.Client().ApplyURI(uri))
 	if err != nil {
 		return nil, err
 	}
