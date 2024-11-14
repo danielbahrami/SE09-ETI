@@ -17,7 +17,7 @@ func main() {
 
 	// Connect to MongoDB
 	mongoUri := fmt.Sprintf("mongodb://%s:%s", env.Get("MONGO_HOST"), env.Get("MONGO_PORT"))
-	client, err := database.ConnectDB(mongoUri)
+	client, err := database.ConnectMongoDB(mongoUri)
 	if err != nil {
 		log.Fatal("Error connecting to MongoDB:", err)
 	}
