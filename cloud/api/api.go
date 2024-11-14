@@ -26,7 +26,7 @@ func RunAPI() {
 			return
 		}
 		fmt.Println(string(body))
-		err = database.MongoStoreData(ctx, robotId, body)
+		err = database.MongoStoreData(ctx, database.CollectionRosBag, robotId, body)
 		if err != nil {
 			ctx.String(http.StatusBadRequest, err.Error())
 			ctx.Abort()
@@ -35,7 +35,7 @@ func RunAPI() {
 	})
 	r.GET("/robot/:robot_id", func(ctx *gin.Context) {
 		robotId := ctx.Param("robot_id")
-		results, err := database.MongoReadAllData[database.RobotDoc](ctx, robotId)
+		results, err := database.MongoReadAllData[database.RobotDoc](ctx, database.CollectionRosBag, robotId)
 		if err != nil {
 			ctx.String(http.StatusBadRequest, err.Error())
 			ctx.Abort()

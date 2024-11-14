@@ -11,22 +11,19 @@ import (
 )
 
 func main() {
+	// progam root context
+	ctx := context.Background()
+
 	// Load environment variables
 	env.Load(".env")
-	fmt.Println(env.Get("MONGO_URI"))
 
 	// Connect to MongoDB
 	mongoUri := fmt.Sprintf("mongodb://%s:%s", env.Get("MONGO_HOST"), env.Get("MONGO_PORT"))
-	client, err := database.ConnectMongoDB(mongoUri)
+	_, err := database.ConnectMongoDB(ctx, mongoUri)
 	if err != nil {
 		log.Fatal("Error connecting to MongoDB:", err)
 	}
-	defer func() {
-		// Ensure MongoDB connection is closed
-		if err = client.Disconnect(context.Background()); err != nil {
-			log.Fatal("Error disconnecting from MongoDB:", err)
-		}
-	}()
+	defer database.DisconnectMongoDB(ctx)
 
 	api.RunAPI()
 }
