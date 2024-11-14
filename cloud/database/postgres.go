@@ -3,9 +3,12 @@ package database
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
+	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func ConnectPostgres() {
@@ -16,14 +19,21 @@ func ConnectPostgres() {
 		os.Exit(1)
 	}
 	defer conn.Close(context.Background())
+}
 
-	var name string
-	var weight int64
-	err = conn.QueryRow(context.Background(), "select name, weight from widgets where id=$1", 42).Scan(&name, &weight)
+func AddRosBag(ctx context.Context, pool *pgxpool.Pool, robotName string, robotSentAt time.Time, rosBagData []byte) error {
+	query := `
+		INSERT INTO ros_bags (robot_name, robot_sent_at, ros_bag_data)
+		VALUES ($1, $2, $3)
+		RETURNING id;
+	`
+
+	var newID int
+	err := pool.QueryRow(ctx, query, robotName, robotSentAt, rosBagData).Scan(&newID)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
-		os.Exit(1)
+		return fmt.Errorf("failed to insert row: %w", err)
 	}
 
-	fmt.Println(name, weight)
+	log.Printf("Inserted new row with ID %d", newID)
+	return nil
 }
