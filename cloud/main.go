@@ -28,5 +28,5 @@ func main() {
 		}
 	}()
 
-	api.RunAPI(client)
+	api.RunAPI()
 }
