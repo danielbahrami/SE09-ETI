@@ -21,15 +21,15 @@ func ConnectPostgres() {
 	defer conn.Close(context.Background())
 }
 
-func AddRosBag(ctx context.Context, pool *pgxpool.Pool, robotName string, robotSentAt time.Time, rosBagData []byte) error {
+func AddRosBag(ctx context.Context, pool *pgxpool.Pool, robotName string, topicName string, robotSentAt time.Time, rosBagData []byte) error {
 	query := `
-		INSERT INTO ros_bags (robot_name, robot_sent_at, ros_bag_data)
-		VALUES ($1, $2, $3)
+		INSERT INTO ros_bags (robot_name, topic_name, robot_sent_at, ros_bag_data)
+		VALUES ($1, $2, $3, $4)
 		RETURNING id;
 	`
 
 	var newID int
-	err := pool.QueryRow(ctx, query, robotName, robotSentAt, rosBagData).Scan(&newID)
+	err := pool.QueryRow(ctx, query, robotName, topicName, robotSentAt, rosBagData).Scan(&newID)
 	if err != nil {
 		return fmt.Errorf("failed to insert row: %w", err)
 	}
