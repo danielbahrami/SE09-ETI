@@ -9,6 +9,8 @@ from sensor_msgs.msg import Imu
 from . import post_request
 from time import time
 
+global_time = time()
+
 class SensorDataHandler:
     MSG_TYPE_MAP = {
         JointState: 'sensor_msgs/msg/JointState',
@@ -90,7 +92,7 @@ class SensorDataHandler:
     
     def upload_file_to_database(self, file):
         """Upload a single file to database; returns True if successful, False if failed."""
-        #post_request.upload_file_to_db(file)#
+        #post_request.upload_file_to_db(self.topic, file)
         return False
 
     def save_buffer_to_ros_bag(self, data):

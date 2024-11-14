@@ -3,8 +3,10 @@ services:
   ros_humble:
     container_name: ubuntu_ros_robot
     environment:
-      - username=Mir_robot
+      - USER_NAME=Mir_robot
     build:
+      args:
+       - USER_NAME=Mir_robot
       context: ./mir_data_collection
       dockerfile: DockerFile
     tty: true
