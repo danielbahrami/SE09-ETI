@@ -30,7 +30,6 @@ monitor_pid=$!
 
 sleep 5
 
-
 # Set initial robot pose for navigation to work
 ros2 topic pub --once /initialpose geometry_msgs/PoseWithCovarianceStamped '{header: {frame_id: "map"}, pose: {pose: {position: {x: 0.0, y: 0.0, z: 0.0}, orientation: {z: 0.0, w: 1.0}}}}'
 

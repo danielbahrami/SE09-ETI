@@ -1,6 +1,5 @@
-from rosbag2_py import SequentialReader, StorageOptions, ConverterOptions
 from rclpy.serialization import deserialize_message
-from nav_msgs.msg import Odometry
+from rosbag2_py import SequentialReader, StorageOptions, ConverterOptions
 from sensor_msgs.msg import Imu
 
 # Path to your bag file
