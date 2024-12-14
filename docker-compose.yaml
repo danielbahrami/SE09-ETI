@@ -8,5 +8,5 @@ services:
       args:
         - USER_NAME=Mir_robot
       context: ./mir_data_collection
-      dockerfile: DockerFile
+      dockerfile: Dockerfile
     tty: true
