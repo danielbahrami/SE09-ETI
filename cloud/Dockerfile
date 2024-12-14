@@ -5,8 +5,8 @@ WORKDIR /app
 # Just used for the temp solution for mcap to json
 RUN apt-get update
 RUN apt-get install python3.6
-# install python3
-# install python dependencies
+RUN apt install python3-pip -y
+RUN pip3 install mcap --break-system-packages
 
 COPY . ./
 RUN go mod download
