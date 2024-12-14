@@ -8,7 +8,8 @@ services:
           - USER_NAME=Mir_robot
         context: ./mir_data_collection
         dockerfile: Dockerfile
-      tty: true
+      networks:
+      - eti
 
   postgres:
     image: postgres:latest
@@ -17,6 +18,8 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: ros_db
       POSTGRES_HOST_AUTH_METHOD: trust
+
+    restart: always
 
     ports:
       - "5432:5432"

@@ -6,7 +6,7 @@ import requests
 
 
 def upload_file_to_db(topic_name, file):
-    url = "http://<my-api>:<5000>/api "  # Replace with target API URL
+    url = "localhost:8080/robot/:" + pwd.getpwuid(os.getuid())[0]  # Replace with target API URL
 
     headers = {'Content-Type': 'application/octet-stream', }
 
