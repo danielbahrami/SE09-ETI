@@ -1,3 +1,5 @@
+CREATE DATABASE ros_db;
+
 CREATE TABLE ros_bags (
     id SERIAL PRIMARY KEY,
     robot_name VARCHAR(100),

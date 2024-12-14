@@ -1,14 +1,13 @@
 package api
 
 import (
-	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
+	"github.com/danielbahrami/se09-eti/cloud/data"
 	"github.com/danielbahrami/se09-eti/cloud/database"
-	"github.com/foxglove/mcap/go/mcap"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,14 +26,13 @@ func RunAPI() {
 			ctx.Abort()
 			return
 		}
-		fmt.Println(string(body))
-		mcapObj, err := mcap.NewReader(ctx.Request.Body)
-		if err != nil {
-			ctx.String(http.StatusInternalServerError, err.Error())
+		if err := database.AddRosBag(ctx, robotId, "TOPIC", time.Now(), body); err != nil {
+			ctx.String(http.StatusBadRequest, err.Error())
 			ctx.Abort()
+			return
 		}
-		bytes, err := json.Marshal(mcapObj)
-		err = database.MongoStoreData(ctx, database.CollectionRosBag, robotId, bytes)
+		jsonBytes, err := data.McapToJson(body)
+		err = database.MongoStoreData(ctx, database.CollectionRosBag, robotId, jsonBytes)
 		if err != nil {
 			ctx.String(http.StatusBadRequest, err.Error())
 			ctx.Abort()

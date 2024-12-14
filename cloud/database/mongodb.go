@@ -22,7 +22,7 @@ var (
 	CollectionRosBag = "rosbag"
 )
 
-func ConnectMongoDB(ctx context.Context, uri string) (*mongo.Client, error) {
+func ConnectMongoDB(ctx context.Context, uri string) error {
 	// Set a timeout for the connection context
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
@@ -30,17 +30,17 @@ func ConnectMongoDB(ctx context.Context, uri string) (*mongo.Client, error) {
 	// Connect to MongoDB
 	client, err := mongo.Connect(options.Client().ApplyURI(uri))
 	if err != nil {
-		return nil, err
+		return err
 	}
 	_client = client
 
 	// Check the connection
 	if err = client.Ping(ctx, nil); err != nil {
-		return nil, err
+		return err
 	}
 
 	log.Println("Connected to MongoDB successfully")
-	return client, nil
+	return nil
 }
 
 func DisconnectMongoDB(ctx context.Context) error {
