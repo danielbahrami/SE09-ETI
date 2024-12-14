@@ -1,0 +1,12 @@
+version: '3'
+services:
+  ros_humble:
+    container_name: ubuntu_ros_robot
+    environment:
+      - USER_NAME=Mir_robot
+    build:
+      args:
+        - USER_NAME=Mir_robot
+      context: ros
+      dockerfile: ros/Dockerfile
+    tty: true
