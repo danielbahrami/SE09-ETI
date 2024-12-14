@@ -1,5 +1,6 @@
-from . import sensor_data_handler
 from nav_msgs.msg import Odometry
+
+from . import sensor_data_handler
 
 """
 Stored every 1ms. Provides essential details about the robot's position and motion over time based on wheel encoders or other motion sensors. Can experience drift over time. We can probably store not all messages?
@@ -19,6 +20,7 @@ Topic: /odom, Timestamp: 3566886000000, Data: nav_msgs.msg.Odometry(header=std_m
        0.e+00, 0.e+00, 0.e+00, 0.e+00, 1.e+12, 0.e+00, 0.e+00, 0.e+00,
        0.e+00, 0.e+00, 0.e+00, 1.e-03])))
 """
+
 
 class OdometryHandler(sensor_data_handler.SensorDataHandler):
     def __init__(self, database_upload_interval_seconds, bag_file_split_duration):

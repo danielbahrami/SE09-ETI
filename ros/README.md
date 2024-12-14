@@ -26,15 +26,18 @@ rm -rf tmp/
 
 # Run simulation (execute all three in different terminals)
 
-ros2 launch mir_gazebo mir_gazebo_launch.py world:=maze rviz_config_file:=$(ros2 pkg prefix mir_navigation)/share/mir_navigation/rviz/mir_nav.rviz
+ros2 launch mir_gazebo mir_gazebo_launch.py world:=maze rviz_config_file:=$(ros2 pkg prefix mir_navigation)
+/share/mir_navigation/rviz/mir_nav.rviz
 
-ros2 launch mir_navigation amcl.py use_sim_time:=true map:=$(ros2 pkg prefix mir_navigation)/share/mir_navigation/maps/maze.yaml
+ros2 launch mir_navigation amcl.py use_sim_time:=true map:=$(ros2 pkg prefix mir_navigation)
+/share/mir_navigation/maps/maze.yaml
 
 ros2 launch mir_navigation navigation.py use_sim_time:=true
 
 # Set initial pose (in fourth terminal, otherwise navigation doesnt work)
 
-ros2 topic pub --once /initialpose geometry_msgs/PoseWithCovarianceStamped '{header: {frame_id: "map"}, pose: {pose: {position: {x: 0.0, y: 0.0, z: 0.0}, orientation: {z: 0.0, w: 1.0}}}}'
+ros2 topic pub --once /initialpose geometry_msgs/PoseWithCovarianceStamped '{header: {frame_id: "map"}, pose: {pose:
+{position: {x: 0.0, y: 0.0, z: 0.0}, orientation: {z: 0.0, w: 1.0}}}}'
 
 # Set goal pose
 
@@ -63,11 +66,12 @@ cd ~/ros2_ws/
 colcon build --packages-select mir_data_collection
 
 not neccesary to source if you added it to bashrc
-source install/setup.bash 
+source install/setup.bash
 
 # Run our package (another terminal...)
 
 ros2 run mir_data_collection sensor_monitor
 
-# OR just run the bash script to start everything 
+# OR just run the bash script to start everything
+
 ~/ros2_ws/src/mir_data_collection/mir_data_collection/start_data_collection.sh

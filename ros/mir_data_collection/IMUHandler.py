@@ -1,5 +1,6 @@
-from . import sensor_data_handler
 from sensor_msgs.msg import Imu
+
+from . import sensor_data_handler
 
 """
 published every 2ms
@@ -67,6 +68,7 @@ linear_acceleration_covariance:
 - 2.8900000000000004e-08
 
 """
+
 
 class IMUHandler(sensor_data_handler.SensorDataHandler):
     def __init__(self, database_upload_interval_seconds, bag_file_split_duration):

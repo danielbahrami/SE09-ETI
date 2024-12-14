@@ -1,6 +1,5 @@
 from rosbag2_py import SequentialReader, StorageOptions, ConverterOptions
 from rclpy.serialization import deserialize_message
-from sensor_msgs.msg import JointState, LaserScan
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Imu
 

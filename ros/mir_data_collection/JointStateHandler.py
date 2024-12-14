@@ -1,5 +1,6 @@
-from . import sensor_data_handler
 from sensor_msgs.msg import JointState
+
+from . import sensor_data_handler
 
 """
 Performed every 10ms. Contains 9 messages for each different link, it's position and velocity. Example data obtained from read_bag.py
@@ -22,6 +23,7 @@ Topic: /joint_states, Timestamp: 474088000000, Data: sensor_msgs.msg.JointState(
 
 Topic: /joint_states, Timestamp: 474088000000, Data: sensor_msgs.msg.JointState(header=std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=474, nanosec=88000000), frame_id=''), name=['right_wheel_joint', 'left_wheel_joint'], position=[-1.0687704019417783, -1.0308859769340728], velocity=[-0.0028012147334669207, -0.0024552901957832335], effort=[])
 """
+
 
 class JointStateHandler(sensor_data_handler.SensorDataHandler):
     def __init__(self, database_upload_interval_seconds, bag_file_split_duration):

@@ -6,7 +6,7 @@ services:
       - USER_NAME=Mir_robot
     build:
       args:
-       - USER_NAME=Mir_robot
+        - USER_NAME=Mir_robot
       context: ros
-      dockerfile: DockerFile
+      dockerfile: ros/Dockerfile
     tty: true
