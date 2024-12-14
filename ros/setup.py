@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'mir_data_collection'
+package_name = 'ros'
 
 setup(
     name=package_name,
@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'sensor_monitor = mir_data_collection.sensor_monitor:main',
+            'sensor_monitor = ros.sensor_monitor:main',
         ],
     },
 )
