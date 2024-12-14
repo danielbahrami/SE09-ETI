@@ -51,7 +51,7 @@ class SensorDataHandler:
         """Callback to handle incoming messages."""
 
         """
-        I'm writing to the ros bag directly, might be slower than keeping messages 
+        I'm writing to the mir_data_collection bag directly, might be slower than keeping messages 
         in memory, but I give up on buffer approach. You are welcom to give it a shot.
         """
         # self.data_buffer.append(msg)

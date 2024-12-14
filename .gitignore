@@ -194,6 +194,6 @@ go.work.sum
 .env
 
 ira_laser_tools/
-ros/data/
+mir_data_collection/data/
 mir_robot/
 twist_stamper/
