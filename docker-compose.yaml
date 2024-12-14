@@ -1,4 +1,15 @@
 services:
+  ros_humble:
+      container_name: ubuntu_ros_robot
+      environment:
+        - USER_NAME=Mir_robot
+      build:
+        args:
+          - USER_NAME=Mir_robot
+        context: ./mir_data_collection
+        dockerfile: Dockerfile
+      tty: true
+
   postgres:
     image: postgres:latest
     environment:
