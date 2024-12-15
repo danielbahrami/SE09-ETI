@@ -125,28 +125,69 @@ class SensorDataHandler:
 
         return sorted_files_by_bag_index
 
-import datetime
-import os
-import pwd
-
 import requests
+import pwd
+import os
+import datetime
+import logging
 
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 def upload_file_to_db(topic_name, file):
-    url = "http://localhost:8080/robot/:" + pwd.getpwuid(os.getuid())[0]  # Replace with target API URL
+    """
+    Uploads a file to a database via HTTP POST request.
 
-    headers = {'Content-Type': 'application/octet-stream', }
+    :param topic_name: The topic name for the file.
+    :param file: File path (str) or file content (bytes).
+    :return: True if upload succeeds, False otherwise.
+    """
+    try:
+        # Construct the API URL
+        url = f"http://host.docker.internal:8080/robot/:{pwd.getpwuid(os.getuid())[0]}"
 
-    with open(file, 'rb') as file:
-        data = file.read()
+        # HTTP headers
+        headers = {'Content-Type': 'application/octet-stream'}
 
-    payload = {'data': data, 'Robot_user': pwd.getpwuid(os.getuid())[0], 'Date': datetime.datetime.now(),
-               'topic': topic_name}
+        # Read file content
+        if isinstance(file, str):  # File path provided
+            if not os.path.exists(file):
+                logging.error(f"File not found: {file}")
+                return False
 
-    response = requests.post(url=url, data=payload, headers=headers)
+            with open(file, 'rb') as f:
+                file_data = f.read()
+        elif isinstance(file, (bytes, bytearray)):  # File content provided
+            file_data = file
+        else:
+            logging.error("Invalid file type. Must be a file path (str) or file content (bytes).")
+            return False
 
-    # Check if the request was successful
-    if response.status_code == 200:
-        return True
-    else:
+        # Prepare payload
+        payload = {
+            'data': file_data,
+            'Robot_user': pwd.getpwuid(os.getuid())[0],
+            'Date': datetime.datetime.now().isoformat(),
+            'topic': topic_name
+        }
+
+        # Make the POST request
+        logging.info(f"Sending POST request to {url} with topic '{topic_name}'")
+        response = requests.post(url=url, data=payload, headers=headers)
+
+        # Handle response
+        if response.status_code == 200:
+            logging.info("File uploaded successfully.")
+            return True
+        else:
+            logging.error(f"Failed to upload file. Status Code: {response.status_code}, Response: {response.text}")
+            return False
+
+    except requests.exceptions.RequestException as e:
+        logging.error(f"HTTP request failed: {e}")
         return False
+    except Exception as e:
+        logging.error(f"An unexpected error occurred: {e}")
+        return False
+
+
