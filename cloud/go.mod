@@ -4,6 +4,7 @@ go 1.23.1
 
 require (
 	github.com/gin-gonic/gin v1.10.0
+	github.com/google/uuid v1.6.0
 	go.mongodb.org/mongo-driver/v2 v2.0.0-beta2
 )
 
