@@ -3,7 +3,6 @@ package database
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
 	"time"
 
@@ -56,7 +55,6 @@ func MongoStoreData(ctx context.Context, collection string, id string, data []by
 	if len(id) == 0 {
 		return ErrNoID
 	}
-	fmt.Println(string(data))
 	coll := _client.Database("robots").Collection(collection)
 	_, err := coll.InsertOne(ctx, RobotDoc{Id: id, Data: data})
 	return err
