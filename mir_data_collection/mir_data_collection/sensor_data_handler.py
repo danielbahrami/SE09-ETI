@@ -1,5 +1,6 @@
 import os
 import re
+import json
 from time import time
 
 from nav_msgs.msg import Odometry
@@ -173,7 +174,7 @@ def upload_file_to_db(topic_name, file):
 
         # Make the POST request
         logging.info(f"Sending POST request to {url} with topic '{topic_name}'")
-        response = requests.post(url=url, data=payload, headers=headers)
+        response = requests.post(url=url, data=json.dumps(payload), headers=headers)
 
         # Handle response
         if response.status_code == 200:
