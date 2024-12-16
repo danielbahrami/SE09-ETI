@@ -129,8 +129,10 @@ class SensorDataHandler:
 import requests
 import pwd
 import os
-import datetime
+from datetime import datetime, timezone
 import logging
+import json
+import base64
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -148,7 +150,7 @@ def upload_file_to_db(topic_name, file):
         url = f"http://{os.getenv('BACKEND_URL')}:8080/robot/:{pwd.getpwuid(os.getuid())[0]}"
 
         # HTTP headers
-        headers = {'Content-Type': 'application/octet-stream'}
+        headers = {'Content-Type': 'application/json'}
 
         # Read file content
         if isinstance(file, str):  # File path provided
@@ -163,12 +165,12 @@ def upload_file_to_db(topic_name, file):
         else:
             logging.error("Invalid file type. Must be a file path (str) or file content (bytes).")
             return False
-
+        
         # Prepare payload
         payload = {
-            'data': file_data,
+            'data': base64.b64encode(file_data).decode('utf-8'),
             'Robot_user': pwd.getpwuid(os.getuid())[0],
-            'Date': datetime.datetime.now().isoformat(),
+            'Date': datetime.now(timezone.utc).isoformat(),
             'topic': topic_name
         }
 
