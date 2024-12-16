@@ -2,6 +2,7 @@ FROM osrf/ros:humble-desktop-full
 SHELL ["/bin/bash", "-c"]
 
 ARG USER_NAME
+ARG BACKEND_URL
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 

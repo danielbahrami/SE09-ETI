@@ -144,7 +144,7 @@ def upload_file_to_db(topic_name, file):
     """
     try:
         # Construct the API URL
-        url = f"http://host.docker.internal:8080/robot/:{pwd.getpwuid(os.getuid())[0]}"
+        url = f"http://{os.getenv('BACKEND_URL')}:8080/robot/:{pwd.getpwuid(os.getuid())[0]}"
 
         # HTTP headers
         headers = {'Content-Type': 'application/octet-stream'}

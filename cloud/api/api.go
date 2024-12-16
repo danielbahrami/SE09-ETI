@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 	"strings"
@@ -27,6 +28,13 @@ func CORSMiddleware() gin.HandlerFunc {
 	}
 }
 
+type Payload struct {
+	Data      []byte    `json:"data"`
+	RobotUser string    `json:"Robot_user"`
+	Date      time.Time `json:"Date"`
+	Topic     string    `json:"topic"`
+}
+
 func RunAPI() {
 	r := gin.Default()
 	r.Use(CORSMiddleware())
@@ -39,16 +47,27 @@ func RunAPI() {
 		robotId := ctx.Param("robot_id")
 		body, err := io.ReadAll(ctx.Request.Body)
 		if err != nil {
-			ctx.Status(400)
+			ctx.Status(http.StatusBadRequest)
 			ctx.Abort()
 			return
 		}
-		if err := database.AddRosBag(ctx, robotId, "TOPIC", time.Now(), body); err != nil {
+		var payload Payload
+		if err := json.Unmarshal(body, &payload); err != nil {
 			ctx.String(http.StatusBadRequest, err.Error())
 			ctx.Abort()
 			return
 		}
-		jsonBytes, err := data.McapToJson(body)
+		if err := database.AddRosBag(ctx, robotId, payload.Topic, payload.Date, payload.Data); err != nil {
+			ctx.String(http.StatusBadRequest, err.Error())
+			ctx.Abort()
+			return
+		}
+		jsonBytes, err := data.McapToJson(payload.Data)
+		if err != nil {
+			ctx.String(http.StatusBadRequest, err.Error())
+			ctx.Abort()
+			return
+		}
 		err = database.MongoStoreData(ctx, database.CollectionRosBag, robotId, jsonBytes)
 		if err != nil {
 			ctx.String(http.StatusBadRequest, err.Error())

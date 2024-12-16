@@ -3,6 +3,7 @@ services:
       container_name: ubuntu_ros_robot
       environment:
         - USER_NAME=Mir_robot
+        - BACKEND_URL=cloud
       build:
         args:
           - USER_NAME=Mir_robot
