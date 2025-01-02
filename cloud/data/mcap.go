@@ -4,7 +4,10 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
+
+	"github.com/google/uuid"
 )
 
 func McapToJson(mcap []byte) ([]byte, error) {
@@ -12,9 +15,17 @@ func McapToJson(mcap []byte) ([]byte, error) {
 	return pythonConverter(mcap)
 }
 
-// Temp solution for converting MCAP to JSON, as the current MCAP support for GO is a bit lacking
 func pythonConverter(mcap []byte) ([]byte, error) {
-	pythonConverter := exec.Command("python3", "./mcap_to_json.py", string(mcap))
+	id := uuid.New().String()
+	file, err := os.Create(id + ".mcap")
+	defer os.Remove(id + ".mcap")
+	if err != nil {
+		return nil, err
+	}
+	if _, err = file.Write(mcap); err != nil {
+		return nil, err
+	}
+	pythonConverter := exec.Command("python3", "./mcap_to_json.py", id+".mcap")
 
 	stdout := new(bytes.Buffer)
 	stderr := new(bytes.Buffer)
@@ -22,7 +33,7 @@ func pythonConverter(mcap []byte) ([]byte, error) {
 	pythonConverter.Stderr = stderr
 
 	if err := pythonConverter.Run(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("python script failed: %w", err)
 	}
 
 	if len(stderr.Bytes()) > 0 {

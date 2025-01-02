@@ -1,6 +1,8 @@
 package api
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"io"
 	"net/http"
 	"strings"
@@ -11,8 +13,32 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func CORSMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE, PATCH")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
+}
+
+type Payload struct {
+	Data      string    `json:"data"` // Base64 encoded bytes
+	RobotUser string    `json:"Robot_user"`
+	Date      time.Time `json:"Date"`
+	Topic     string    `json:"topic"`
+}
+
 func RunAPI() {
 	r := gin.Default()
+	r.Use(CORSMiddleware())
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
@@ -21,17 +47,35 @@ func RunAPI() {
 	r.POST("/robot/:robot_id", func(ctx *gin.Context) {
 		robotId := ctx.Param("robot_id")
 		body, err := io.ReadAll(ctx.Request.Body)
+		defer ctx.Request.Body.Close()
 		if err != nil {
-			ctx.Status(400)
+			ctx.Status(http.StatusBadRequest)
 			ctx.Abort()
 			return
 		}
-		if err := database.AddRosBag(ctx, robotId, "TOPIC", time.Now(), body); err != nil {
+		var payload Payload
+		if err := json.Unmarshal(body, &payload); err != nil {
 			ctx.String(http.StatusBadRequest, err.Error())
 			ctx.Abort()
 			return
 		}
-		jsonBytes, err := data.McapToJson(body)
+		decodedBytes := make([]byte, base64.StdEncoding.DecodedLen(len(payload.Data)))
+		if _, err := base64.StdEncoding.Decode(decodedBytes, []byte(payload.Data)); err != nil {
+			ctx.String(http.StatusBadRequest, err.Error())
+			ctx.Abort()
+			return
+		}
+		if err := database.AddRosBag(ctx, robotId, payload.Topic, payload.Date, decodedBytes); err != nil {
+			ctx.String(http.StatusBadRequest, err.Error())
+			ctx.Abort()
+			return
+		}
+		jsonBytes, err := data.McapToJson(decodedBytes)
+		if err != nil {
+			ctx.String(http.StatusBadRequest, err.Error())
+			ctx.Abort()
+			return
+		}
 		err = database.MongoStoreData(ctx, database.CollectionRosBag, robotId, jsonBytes)
 		if err != nil {
 			ctx.String(http.StatusBadRequest, err.Error())
