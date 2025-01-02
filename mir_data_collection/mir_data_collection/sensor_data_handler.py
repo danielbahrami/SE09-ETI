@@ -1,6 +1,4 @@
-import os
 import re
-import json
 from time import time
 
 from nav_msgs.msg import Odometry
@@ -95,7 +93,7 @@ class SensorDataHandler:
     def upload_file_to_database(self, file):
         """Upload a single file to database; returns True if successful, False if failed."""
         upload_file_to_db(self.topic, file)
-        #return False
+        # return False
 
     def save_buffer_to_ros_bag(self, data):
         for msg in data:
@@ -126,6 +124,7 @@ class SensorDataHandler:
 
         return sorted_files_by_bag_index
 
+
 import requests
 import pwd
 import os
@@ -136,6 +135,7 @@ import base64
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
 
 def upload_file_to_db(topic_name, file):
     """
@@ -165,7 +165,7 @@ def upload_file_to_db(topic_name, file):
         else:
             logging.error("Invalid file type. Must be a file path (str) or file content (bytes).")
             return False
-        
+
         # Prepare payload
         payload = {
             'data': base64.b64encode(file_data).decode('utf-8'),
@@ -192,5 +192,3 @@ def upload_file_to_db(topic_name, file):
     except Exception as e:
         logging.error(f"An unexpected error occurred: {e}")
         return False
-
-

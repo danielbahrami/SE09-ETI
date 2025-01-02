@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	// progam root context
+	// Progam root context
 	ctx := context.Background()
 
 	// Load environment variables
@@ -23,6 +23,7 @@ func main() {
 		log.Fatal("Error connecting to MongoDB:", err)
 	}
 	defer database.DisconnectMongoDB(ctx)
+
 	// Connect to Postgres
 	postgresUri := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		env.Get("POSTGRES_USER"), env.Get("POSTGRES_PASSWORD"), env.Get("POSTGRES_HOST"), env.Get("POSTGRES_PORT"), env.Get("POSTGRES_DB"))

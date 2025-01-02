@@ -1,7 +1,9 @@
-import sys
 import json
+import sys
 from io import BytesIO
+
 from mcap.reader import make_reader
+
 
 def mcap_to_json(file_name):
     messages = []
@@ -21,8 +23,11 @@ def mcap_to_json(file_name):
     json_string = json.dumps(messages)
     return json_string
 
+
 def main():
     sys.stdout.write(mcap_to_json(sys.argv[1]))
+
+
 """     with open('dummy/data/joint_states/joint_states_0.mcap', 'rb') as f:
         b = f.read()
         json_string = mcap_to_json(b)
@@ -30,4 +35,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

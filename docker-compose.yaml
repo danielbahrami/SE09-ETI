@@ -1,15 +1,15 @@
 services:
   ros_humble:
-      container_name: ubuntu_ros_robot
-      environment:
+    container_name: ubuntu_ros_robot
+    environment:
+      - USER_NAME=Mir_robot
+      - BACKEND_URL=cloud
+    build:
+      args:
         - USER_NAME=Mir_robot
-        - BACKEND_URL=cloud
-      build:
-        args:
-          - USER_NAME=Mir_robot
-        context: ./mir_data_collection
-        dockerfile: Dockerfile
-      networks:
+      context: ./mir_data_collection
+      dockerfile: Dockerfile
+    networks:
       - eti
 
   postgres:

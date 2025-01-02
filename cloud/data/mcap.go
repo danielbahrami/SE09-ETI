@@ -15,7 +15,6 @@ func McapToJson(mcap []byte) ([]byte, error) {
 	return pythonConverter(mcap)
 }
 
-// Temp solution for converting MCAP to JSON, as the current MCAP support for GO is a bit lacking
 func pythonConverter(mcap []byte) ([]byte, error) {
 	id := uuid.New().String()
 	file, err := os.Create(id + ".mcap")
